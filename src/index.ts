@@ -3,6 +3,8 @@ import readline from "readline";
 import { isCommentLine } from "./utils/is-comment.js";
 import { isKeyValueLine } from "./utils/is-key-value-line.js";
 import { isMultiLine } from "./utils/is-multi-line.js";
+import { containsComment } from "./utils/contains-comment.js";
+import { removeComment } from "./utils/remove-comment.js";
 
 async function readFile(path: string) {
   const readSteam = fs.createReadStream(path, { encoding: "utf-8" });
@@ -19,36 +21,52 @@ async function readFile(path: string) {
   let isMultiLineStatus = false;
 
   for await (const line of rl) {
-    const trimmedLine = line.trim();
+    let trimmedLine = line.trim();
 
     // check if the line is a comment or empty
-    if (isCommentLine(trimmedLine) || !trimmedLine) {
-      continue;
-    }
+    if (isCommentLine(trimmedLine) || !trimmedLine) continue;
 
-    // check if a line is a key=value line or a continuation of a multiline
+    //  continuation of a multiline value
     if (!isKeyValueLine(trimmedLine) && isMultiLineStatus) {
+      if (containsComment(trimmedLine)) {
+        trimmedLine = removeComment(trimmedLine);
+      }
+
       buffer[curKey] += trimmedLine;
 
-      if (line.endsWith("'") || line.endsWith('"')) {
-        result[curKey] = buffer[curKey]!.replace(/"/g, "");
+      if (trimmedLine.endsWith("'") || trimmedLine.endsWith('"')) {
+        result[curKey.trim()] = buffer[curKey.trim()]!.replace(
+          /^["']|["']$/g,
+          ""
+        );
         buffer = {};
         isMultiLineStatus = false;
       }
+
+      continue;
     }
 
     // check if a line is a key=value line
     if (isKeyValueLine(trimmedLine)) {
-      const [key, value] = trimmedLine.split("=");
+      let [key, value] = trimmedLine.split("=");
+      if (containsComment(value as string)) {
+        value = removeComment(value as string);
+      }
+
       if (key && value && isMultiLine(value)) {
-        buffer[key] = value;
+        buffer[key.trim()] = value.trim();
         curKey = key;
         isMultiLineStatus = true;
         continue;
       }
 
-      result[key!] = value!.replace(/"/g, "");
+      result[key!.trim()] = value!.trim().replace(/^["']|["']$/g, "");
     }
+  }
+
+  // save last multi-line if file ends without closing quote
+  if (curKey && buffer[curKey]) {
+    result[curKey] = buffer[curKey]!.replace(/^["']|["']$/g, "");
   }
 
   return result;
@@ -56,7 +74,4 @@ async function readFile(path: string) {
 
 const result = await readFile(".env");
 
-console.log("                                 ");
-console.log("                                 ");
-
-console.log(result);
+export { readFile };
