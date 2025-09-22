@@ -2,17 +2,16 @@
 
 # 📋 Core Parsing Engine
 
-    Basic Syntax Support
-
-    KEY=value basic assignment
-
-    Comments support throughout file
-
-    Empty line skipping
-
-    Whitespace trimming (KEY = value → KEY=value)
-
-    Case-sensitive key handling
+- Basic syntax support
+- KEY=value basic assignment
+- Comments support throughout file
+- Empty line skipping
+- Whitespace trimming (KEY = value → KEY=value)
+- Case-sensitive key handling ??
+- Multi-line values (single or double quoted)
+- Inline comment stripping
+- Preserving `#` inside quoted values
+- Allowing `#` as a value
 
 # 🎯 Advanced Syntax Features
 

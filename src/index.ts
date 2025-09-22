@@ -72,6 +72,4 @@ async function readFile(path: string) {
   return result;
 }
 
-const result = await readFile(".env");
-
 export { readFile };
