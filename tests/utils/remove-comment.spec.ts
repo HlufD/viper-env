@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { removeComment } from "../src/utils/remove-comment";
+import { removeComment } from "../../src/utils/remove-comment";
 
 describe("remove Comment", () => {
   it("should remove inline comments after #", () => {

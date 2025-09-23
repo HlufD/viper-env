@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isMultiLine } from "../src/utils/is-multi-line";
+import { isMultiLine } from "../../src/utils/is-multi-line";
 
 describe("isMultiLine", () => {
   it("detects multi line (start of multiline)", () => {

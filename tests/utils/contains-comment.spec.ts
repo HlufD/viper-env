@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { containsComment } from "../src/utils/contains-comment";
+import { containsComment } from "../../src/utils/contains-comment";
 
 describe("containsComment", () => {
   it("should return true if line contains #", () => {

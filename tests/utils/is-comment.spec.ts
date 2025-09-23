@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isCommentLine } from "../src/utils/is-comment.js";
+import { isCommentLine } from "../../src/utils/is-comment.js";
 
 describe("isCommentLine", () => {
   it("detects comment", () => {

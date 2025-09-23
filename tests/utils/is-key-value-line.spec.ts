@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isKeyValueLine } from "../src/utils/is-key-value-line.js";
+import { isKeyValueLine } from "../../src/utils/is-key-value-line.js";
 
 describe("isKeyValueLine", () => {
   it("detects valid key=value lines", () => {
