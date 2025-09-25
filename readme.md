@@ -17,18 +17,6 @@
 
     export KEY=value (optional export prefix)
 
-    environment streaming for large files
-
-    KEY="quoted value" (double quotes)
-
-    KEY='quoted value' (single quotes)
-
-    KEY=value # inline comment (inline comments)
-
-    KEY= (empty values)
-
-    KEY (no value, treated as empty)
-
     ## 🔄 Variable Expansion
 
         PATH=$HOME/bin (simple expansion)
