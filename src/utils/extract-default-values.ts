@@ -5,18 +5,30 @@ function extractDefaultValuesFromDependencies(
   environment: Map<string, string>
 ) {
   for (const env in dependencies) {
-    for (const variables of dependencies[env]!) {
-      const match = variables.dependency.match(/:-[^}]+/g);
+    for (const variable of dependencies[env]!) {
+      const match = variable.dependency.match(/:-[^}]+|:\?[^}]+/);
 
-      if (match && match?.length! > 0) {
-        variables.defaultValue = match[0].split(":-")[1]!;
-        variables.dependency = variables.dependency.replace(match[0], "");
-        variables.placeholder = variables.placeholder.replace(match[0], "");
-        // change the environments map also -> to correctly resolve the dependency
-        environment.set(env, environment.get(env)!.replace(match[0], ""));
+      if (match) {
+        const token = match[0];
+
+        if (token.startsWith(":-")) {
+          const defaultValue = token.slice(2);
+          variable.defaultValue = defaultValue;
+        } else if (token.startsWith(":?")) {
+          const error = token.slice(2);
+          if (!environment.get(variable.dependency.replace(token, ""))) {
+            throw new Error(error || `${variable.dependency} is required`);
+          }
+        }
+
+        variable.dependency = variable.dependency.replace(token, "");
+        variable.placeholder = variable.placeholder.replace(token, "");
+        environment.set(env, environment.get(env)!.replace(token, ""));
+
         continue;
       }
-      variables.defaultValue = "";
+
+      variable.defaultValue = "";
     }
   }
   return dependencies;

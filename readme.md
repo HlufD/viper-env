@@ -22,9 +22,8 @@
        - DB_URL=postgres://${USER}:${PASSWORD}@${HOST}/${DB} (multiple expansions)
        - DEFAULT=${NOT_SET:-default_value} (default values)
        - Circular reference detection and prevention
-
-       - PATH=$HOME/bin (simple expansion) -> (not Implemented)
-       - REQUIRED=${MUST_SET:?error} (required variables)  -> (not Implemented)
+       - PATH=$HOME/bin (simple expansion)
+       - REQUIRED=${MUST_SET:?error} (required variables)
 
     ## 📏 Multi-line Values
 

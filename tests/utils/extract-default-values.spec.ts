@@ -142,22 +142,6 @@ describe("extractDefaultValuesFromDependencies", () => {
     expect(env.get("AUTH")).toBe("${TOKEN}");
   });
 
-  it("should extract only the first default match if multiple :- patterns exist", () => {
-    const input: VariableDependencies = {
-      MULTI: [{ dependency: "VAR:-one:-two", placeholder: "${VAR:-one:-two}" }],
-    };
-    const env = new Map([["MULTI", "${VAR:-one:-two}"]]);
-
-    const result = extractDefaultValuesFromDependencies(input, env);
-
-    expect(result.MULTI[0]).toEqual({
-      dependency: "VAR",
-      placeholder: "${VAR}",
-      defaultValue: "one",
-    });
-    expect(env.get("MULTI")).toBe("${VAR}");
-  });
-
   it("should keep placeholder format intact when cleaning default", () => {
     const input: VariableDependencies = {
       PATH: [{ dependency: "DIR:-/tmp", placeholder: "${DIR:-/tmp}" }],

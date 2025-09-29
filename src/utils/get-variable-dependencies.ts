@@ -15,11 +15,11 @@ function getVariableDependencies(
   if (typeof value !== "string") return dependencies;
 
   const matches: RegExpMatchArray[] = Array.from(
-    value.matchAll(/\$\{([^}]+)\}/g)
+    value.matchAll(/\$\{([^}]+)\}|\$([a-zA-Z0-9]+)/g)
   );
 
   for (const match of matches) {
-    const depName = match[1];
+    const depName = match[1] || match[2];
     if (depName && dependencies[variableName]) {
       dependencies[variableName].push({
         dependency: depName,
