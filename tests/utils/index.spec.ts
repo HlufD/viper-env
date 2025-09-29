@@ -6,6 +6,27 @@ vi.mock("../../src/utils/read-env-file.js", () => ({
 vi.mock("../../src/utils/build-environment-dependency-graph.js", () => ({
   buildEnvironmentDependencyGraph: vi.fn(),
 }));
+vi.mock("../../src/utils/extract-default-values.js", () => ({
+  extractDefaultValuesFromDependencies: vi.fn(
+    (dependencies: any, environment: Map<string, string>) => {
+      // Minimal fake logic for defaults
+      for (const key in dependencies) {
+        for (const dep of dependencies[key]) {
+          if (dep.dependency.includes(":-")) {
+            const [name, def] = dep.dependency.split(":-");
+            dep.dependency = name;
+            dep.placeholder = dep.placeholder.replace(`:-${def}`, "");
+            dep.defaultValue = def;
+            environment.set(key, environment.get(key)!.replace(`:-${def}`, ""));
+          } else {
+            dep.defaultValue = "";
+          }
+        }
+      }
+      return dependencies;
+    }
+  ),
+}));
 
 import { config } from "../../src/index.js";
 import { readEnvFile } from "../../src/utils/read-env-file.js";
@@ -15,7 +36,17 @@ describe("config", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     // Clear process.env
-    for (const key of ["HOST", "PORT", "URL", "FULL_URL", "API_KEY"]) {
+    for (const key of [
+      "HOST",
+      "PORT",
+      "URL",
+      "FULL_URL",
+      "API_KEY",
+      "TOKEN",
+      "DB_HOST",
+      "DB_PORT",
+      "SERVICE_URL",
+    ]) {
       delete process.env[key];
     }
   });
@@ -192,5 +223,83 @@ describe("config", () => {
 
     const env = await config();
     expect(env.get("Z")).toBe("xyz");
+  });
+
+  // === DEFAULT VALUE TESTS ===
+
+  it("resolves variable with a default value", async () => {
+    (readEnvFile as any).mockResolvedValue({
+      API_KEY: "${TOKEN:-abc123}",
+    });
+    (buildEnvironmentDependencyGraph as any).mockImplementation(() => ({
+      TOKEN: [],
+      API_KEY: [
+        { dependency: "TOKEN:-abc123", placeholder: "${TOKEN:-abc123}" },
+      ],
+    }));
+
+    const env = await config();
+
+    expect(env.get("TOKEN")).toBe("abc123");
+    expect(env.get("API_KEY")).toBe("abc123");
+    expect(process.env.TOKEN).toBe("abc123");
+    expect(process.env.API_KEY).toBe("abc123");
+  });
+
+  it("resolves multiple variables with defaults", async () => {
+    (readEnvFile as any).mockResolvedValue({
+      DB_HOST: "${HOST:-localhost}",
+      DB_PORT: "${PORT:-5432}",
+    });
+    (buildEnvironmentDependencyGraph as any).mockImplementation(() => ({
+      HOST: [],
+      PORT: [],
+      DB_HOST: [
+        { dependency: "HOST:-localhost", placeholder: "${HOST:-localhost}" },
+      ],
+      DB_PORT: [{ dependency: "PORT:-5432", placeholder: "${PORT:-5432}" }],
+    }));
+
+    const env = await config();
+
+    expect(env.get("DB_HOST")).toBe("localhost");
+    expect(env.get("DB_PORT")).toBe("5432");
+  });
+
+  it("resolves nested variables using defaults", async () => {
+    (readEnvFile as any).mockResolvedValue({
+      SERVICE_URL: "${HOST:-localhost}:${PORT:-3000}/api",
+    });
+    (buildEnvironmentDependencyGraph as any).mockImplementation(() => ({
+      HOST: [],
+      PORT: [],
+      SERVICE_URL: [
+        { dependency: "HOST:-localhost", placeholder: "${HOST:-localhost}" },
+        { dependency: "PORT:-3000", placeholder: "${PORT:-3000}" },
+      ],
+    }));
+
+    const env = await config();
+
+    expect(env.get("SERVICE_URL")).toBe("localhost:3000/api");
+  });
+
+  it("uses default if dependency is missing", async () => {
+    (readEnvFile as any).mockResolvedValue({
+      API_KEY: "${TOKEN:-defaultKey}",
+    });
+    (buildEnvironmentDependencyGraph as any).mockImplementation(() => ({
+      TOKEN: [],
+      API_KEY: [
+        {
+          dependency: "TOKEN:-defaultKey",
+          placeholder: "${TOKEN:-defaultKey}",
+        },
+      ],
+    }));
+
+    const env = await config();
+
+    expect(env.get("API_KEY")).toBe("defaultKey");
   });
 });

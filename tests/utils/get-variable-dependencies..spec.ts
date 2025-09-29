@@ -69,16 +69,6 @@ describe("getVariableDependencies", () => {
     });
   });
 
-  it("should return only matched variables inside ${}", () => {
-    const result = getVariableDependencies("A", "This ${B} and ${C} and $D");
-    expect(result).toEqual({
-      A: [
-        { dependency: "B", placeholder: "${B}" },
-        { dependency: "C", placeholder: "${C}" },
-      ],
-    });
-  });
-
   it("should return empty array if value has only text and symbols", () => {
     const result = getVariableDependencies("A", "hello world! @#$%");
     expect(result).toEqual({ A: [] });

@@ -32,9 +32,11 @@ function topologicalSort(graph: DependencyGraph): string[] {
 
       stack.push([currNode, true]);
 
-      for (const neighbor of graph[currNode]!) {
-        if (!visited.has(neighbor.dependency)) {
-          stack.push([neighbor.dependency, false]);
+      if (graph[currNode]) {
+        for (const neighbor of graph[currNode]!) {
+          if (!visited.has(neighbor.dependency)) {
+            stack.push([neighbor.dependency, false]);
+          }
         }
       }
     }
