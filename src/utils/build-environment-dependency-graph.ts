@@ -3,6 +3,7 @@ import { getVariableDependencies } from "./get-variable-dependencies.js";
 interface VariableDependency {
   dependency: string;
   placeholder: string;
+  defaultValue?: string;
 }
 
 type DependencyGraph = Record<string, VariableDependency[]>;

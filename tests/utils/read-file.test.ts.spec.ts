@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { readEnvFile } from "../src/utils/read-env-file";
+import { readEnvFile } from "../../src/utils/read-env-file";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempEnvPath = path.join(__dirname, "test.env");

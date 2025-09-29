@@ -1,6 +1,7 @@
 interface Dependency {
   dependency: string;
   placeholder: string;
+  defaultValue?: string;
 }
 
 type VariableDependencies = Record<string, Dependency[]>;
@@ -31,3 +32,4 @@ function getVariableDependencies(
 }
 
 export { getVariableDependencies };
+export type { VariableDependencies };
