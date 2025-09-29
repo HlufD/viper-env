@@ -15,57 +15,42 @@
 
 # 🎯 Advanced Syntax Features
 
-    export KEY=value (optional export prefix)
+    - export KEY=value (optional export prefix)
 
     ## 🔄 Variable Expansion
+       - PATH=${HOME}/bin (brace expansion)
+       - DB_URL=postgres://${USER}:${PASSWORD}@${HOST}/${DB} (multiple expansions)
+       - DEFAULT=${NOT_SET:-default_value} (default values)
+       - Circular reference detection and prevention
 
-        PATH=$HOME/bin (simple expansion)
-
-        PATH=${HOME}/bin (brace expansion)
-
-        DB_URL=postgres://${USER}:${PASSWORD}@${HOST}/${DB} (multiple expansions)
-
-        DEFAULT=${NOT_SET:-default_value} (default values)
-
-        REQUIRED=${MUST_SET:?error} (required variables)
-
-        Circular reference detection and prevention
+       - PATH=$HOME/bin (simple expansion) -> (not Implemented)
+       - REQUIRED=${MUST_SET:?error} (required variables)  -> (not Implemented)
 
     ## 📏 Multi-line Values
 
-        MULTILINE="line1\nline2" (escape sequences)
-
-        MULTILINE="line1 (quoted multi-line)
-
-        line2"
-
-        CERT="-----BEGIN CERT----- (large multi-line values)
-
-        ...
-
-        -----END CERT-----"
+       - MULTILINE="line1\nline2" (escape sequences)
 
     ## 🚨 Escape Sequences
 
-        \\ - Backslash
+       - \\ - Backslash
 
-        \" - Double quote
+       - \" - Double quote
 
-        \' - Single quote
+       - \' - Single quote
 
-        \n - Newline
+       - \n - Newline
 
-        \r - Carriage return
+       - \r - Carriage return
 
-        \t - Tab
+       - \t - Tab
 
-        \b - Backspace
+       - \b - Backspace
 
-        \f - Form feed
+       - \f - Form feed
 
-        \uXXXX - Unicode characters
+       - \uXXXX - Unicode characters
 
-        \$ - Dollar sign (prevent expansion)
+       - \$ - Dollar sign (prevent expansion)
 
 # 📁 File Management
 

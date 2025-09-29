@@ -240,7 +240,9 @@ describe("config", () => {
 
     const env = await config();
 
+    expect(env.get("TOKEN")).toBe("abc123");
     expect(env.get("API_KEY")).toBe("abc123");
+    expect(process.env.TOKEN).toBe("abc123");
     expect(process.env.API_KEY).toBe("abc123");
   });
 
