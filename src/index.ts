@@ -38,11 +38,3 @@ async function config(path: string = ".env") {
 }
 
 export { config };
-
-const result = await config();
-console.log(result);
-
-// console.log("HOST:", process.env.HOST);
-// console.log("PORT:", process.env.PORT);
-// console.log("URL:", process.env.URL);
-// console.log("FULL_URL:", process.env.FULL_URL);
