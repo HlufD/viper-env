@@ -1,6 +1,6 @@
 🚀 Feature Implementation Roadmap
 
-# 📋 Core Parsing Engine
+# 📋 Core Parsing Engine -> done
 
 - Basic syntax support
 - KEY=value basic assignment
@@ -17,7 +17,7 @@
 
     - export KEY=value (optional export prefix)
 
-    ## 🔄 Variable Expansion
+    ## 🔄 Variable Expansion -> done
        - PATH=${HOME}/bin (brace expansion)
        - DB_URL=postgres://${USER}:${PASSWORD}@${HOST}/${DB} (multiple expansions)
        - DEFAULT=${NOT_SET:-default_value} (default values)
@@ -25,11 +25,7 @@
        - PATH=$HOME/bin (simple expansion)
        - REQUIRED=${MUST_SET:?error} (required variables)
 
-    ## 📏 Multi-line Values
-
-       - MULTILINE="line1\nline2" (escape sequences)
-
-    ## 🚨 Escape Sequences
+    ## 🚨 Escape Sequences -> done
 
        - \\ - Backslash
 

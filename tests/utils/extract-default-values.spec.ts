@@ -166,4 +166,20 @@ describe("extractDefaultValuesFromDependencies", () => {
     expect(result.BROKEN[0].dependency).toBe("");
     expect(env.get("BROKEN")).toBe("${}");
   });
+
+  it("should throw an error for required variables when missing", () => {
+    const input: VariableDependencies = {
+      API_KEY: [
+        {
+          dependency: "API_KEY:?API_KEY is required",
+          placeholder: "${API_KEY:?API_KEY is required}",
+        },
+      ],
+    };
+
+    const env = new Map<string, string>();
+    expect(() => extractDefaultValuesFromDependencies(input, env)).toThrow(
+      "API_KEY is required"
+    );
+  });
 });
