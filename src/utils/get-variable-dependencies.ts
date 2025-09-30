@@ -15,7 +15,7 @@ function getVariableDependencies(
   if (typeof value !== "string") return dependencies;
 
   const matches: RegExpMatchArray[] = Array.from(
-    value.matchAll(/\$\{([^}]+)\}|\$([a-zA-Z0-9]+)/g)
+    value.matchAll(/(?<!\\)\$\{([^}]+)\}|(?<!\\)\$([a-zA-Z0-9]+)/g)
   );
 
   for (const match of matches) {
