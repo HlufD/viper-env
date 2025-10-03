@@ -5,9 +5,8 @@ import { loadEnvironment } from "./load-environment.js";
 import { applyEscapeSequences } from "./apply-escape-sequences.js";
 import { resolveDependencies } from "./resolve-dependencies.js";
 
-const environment = new Map<string, string>();
-
 async function config(path: string | null = null) {
+  const environment = new Map<string, string>();
   await loadEnvironment(path, environment);
   applyEscapeSequences(environment);
   const dependencyGraph = buildEnvironmentDependencyGraph(environment);
@@ -18,4 +17,5 @@ async function config(path: string | null = null) {
 }
 
 export { config };
+
 
