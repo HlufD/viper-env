@@ -26,60 +26,31 @@
        - REQUIRED=${MUST_SET:?error} (required variables)
 
     ## 🚨 Escape Sequences -> done
-
        - \\ - Backslash
-
        - \" - Double quote
-
        - \' - Single quote
-
        - \n - Newline
-
        - \r - Carriage return
-
        - \t - Tab
-
        - \b - Backspace
-
        - \f - Form feed
-
        - \uXXXX - Unicode characters
-
        - \$ - Dollar sign (prevent expansion)
 
 # 📁 File Management
 
     ## 🔍 File Discovery
-
-        .env - Primary file
-
-        .env.local - Local overrides (ignored in git)
-
-        .env.{NODE_ENV} - Environment-specific (.env.production, .env.development)
-
-        .env.{NODE_ENV}.local - Environment-specific local overrides
-
-        Custom file path support
+       - .env - Primary file
+       - .env.local - Local overrides (ignored in git)
+       - .env.{NODE_ENV} - Environment-specific (.env.production, .env.development)
+       - .env.{NODE_ENV}.local - Environment-specific local overrides
+       - Custom file path support
 
     ## 📊 Loading Precedence
-
-        Environment-specific files override general files
-
-        Local files override shared files
-
-        Configurable precedence rules
-
-        Merge strategies (override, combine, smart)
-
-    ## 🔄 File Watching
-
-        Hot reload on file changes
-
-        Debounced reloading
-
-        Change detection and notifications
-
-        Optional file watching
+       - Environment-specific files override general files
+       - Local files override shared files
+       - Configurable precedence rules
+       - Merge strategies (override, combine, smart)
 
 # 🛡️ Security Features
 
