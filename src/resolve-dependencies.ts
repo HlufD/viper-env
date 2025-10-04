@@ -10,7 +10,6 @@ function resolveDependencies(
 
         if (!environment.get(key)) {
           environment.set(key, defaultValue!);
-          process.env[key] = environment.get(key);
         }
 
         environment.set(
@@ -19,8 +18,6 @@ function resolveDependencies(
         );
       }
     }
-
-    process.env[env] = environment.get(env);
   }
 }
 export { resolveDependencies };
