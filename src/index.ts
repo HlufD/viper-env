@@ -25,15 +25,3 @@ async function config(path: string | null = null, schema?: EnvSchema) {
 }
 
 export { config };
-
-
-const schema: EnvSchema = {
-  NODE_ENV: { required: true, type: "string", allowedValues: ["development", "production"] },
-  PORT: { required: true, type: "number" },
-  SOME_BOOL: { required: true, type: "boolean" }
-}
-
-
-
-const r = await config(null, schema)
-console.log(r)

@@ -6,7 +6,7 @@ function extractDefaultValuesFromDependencies(
 ) {
   for (const env in dependencies) {
     for (const variable of dependencies[env]!) {
-      const match = variable.dependency.match(/:-[^}]+|:\?[^}]+/);
+      const match = variable.dependency.match(/:-[^}]*|:\?[^}]+/);
 
       if (match) {
         const token = match[0];
@@ -16,14 +16,18 @@ function extractDefaultValuesFromDependencies(
           variable.defaultValue = defaultValue;
         } else if (token.startsWith(":?")) {
           const error = token.slice(2);
-          if (!environment.get(variable.dependency.replace(token, ""))) {
-            throw new Error(error || `${variable.dependency} is required`);
+          const depName = variable.dependency.replace(token, "");
+          if (environment.get(depName) === undefined) {
+            throw new Error(error);
           }
+          variable.defaultValue = "";
         }
 
         variable.dependency = variable.dependency.replace(token, "");
         variable.placeholder = variable.placeholder.replace(token, "");
-        environment.set(env, environment.get(env)!.replace(token, ""));
+        if (environment.has(env)) {
+          environment.set(env, environment.get(env)!.replace(token, ""));
+        }
 
         continue;
       }
@@ -31,6 +35,7 @@ function extractDefaultValuesFromDependencies(
       variable.defaultValue = "";
     }
   }
+
   return dependencies;
 }
 

@@ -6,7 +6,7 @@ describe("extractDefaultValuesFromDependencies", () => {
   let consoleSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    consoleSpy = vi.spyOn(console, "log").mockImplementation(() => { });
   });
 
   afterEach(() => {
@@ -182,4 +182,107 @@ describe("extractDefaultValuesFromDependencies", () => {
       "API_KEY is required"
     );
   });
+
+  it("should handle empty default value", () => {
+    const input: VariableDependencies = {
+      TOKEN: [{ dependency: "TOKEN:-", placeholder: "${TOKEN:-}" }],
+    };
+    const env = new Map([["TOKEN", "${TOKEN:-}"]]);
+
+    const result = extractDefaultValuesFromDependencies(input, env);
+
+    expect(result.TOKEN[0]).toEqual({
+      dependency: "TOKEN",
+      placeholder: "${TOKEN}",
+      defaultValue: "",
+    });
+    expect(env.get("TOKEN")).toBe("${TOKEN}");
+  });
+
+  it("should not throw for required variables if present in environment", () => {
+    const input: VariableDependencies = {
+      API_KEY: [
+        {
+          dependency: "API_KEY:?API_KEY is required",
+          placeholder: "${API_KEY:?API_KEY is required}",
+        },
+      ],
+    };
+    const env = new Map([["API_KEY", "exists"]]);
+
+    const result = extractDefaultValuesFromDependencies(input, env);
+    expect(env.get("API_KEY")).toBe("exists");
+
+    expect(result.API_KEY[0]).toEqual({
+      dependency: "API_KEY",
+      placeholder: "${API_KEY}",
+      defaultValue: "",
+    });
+
+  });
+
+  it("should handle dependencies with no token after cleaning match", () => {
+    const input: VariableDependencies = {
+      EMPTY: [{ dependency: "EMPTY:-", placeholder: "${EMPTY:-}" }],
+    };
+    const env = new Map([["EMPTY", "${EMPTY:-}"]]);
+
+    const result = extractDefaultValuesFromDependencies(input, env);
+
+    expect(result.EMPTY[0]).toEqual({
+      dependency: "EMPTY",
+      placeholder: "${EMPTY}",
+      defaultValue: "",
+    });
+    expect(env.get("EMPTY")).toBe("${EMPTY}");
+  });
+
+  it("should not fail when environment map does not have the key", () => {
+    const input: VariableDependencies = {
+      MISSING: [{ dependency: "FOO:-bar", placeholder: "${FOO:-bar}" }],
+    };
+    const env = new Map();
+
+    const result = extractDefaultValuesFromDependencies(input, env);
+
+    expect(result.MISSING[0]).toEqual({
+      dependency: "FOO",
+      placeholder: "${FOO}",
+      defaultValue: "bar",
+    });
+    expect(env.has("MISSING")).toBe(false);
+  });
+
+  it("should not throw for required variable with empty string in environment", () => {
+    const input: VariableDependencies = {
+      API_KEY: [{ dependency: "API_KEY:?Required", placeholder: "${API_KEY:?Required}" }],
+    };
+    const env = new Map([["API_KEY", ""]]);
+
+    const result = extractDefaultValuesFromDependencies(input, env);
+
+    expect(result.API_KEY[0]).toEqual({
+      dependency: "API_KEY",
+      placeholder: "${API_KEY}",
+      defaultValue: "",
+    });
+    expect(env.get("API_KEY")).toBe("");
+  });
+
+  it("should not modify environment when default token is not in env", () => {
+    const input: VariableDependencies = {
+      FOO: [{ dependency: "FOO:-bar", placeholder: "${FOO:-bar}" }],
+    };
+    const env = new Map([["FOO", "${FOO}"]]); // token not present in value
+
+    const result = extractDefaultValuesFromDependencies(input, env);
+
+    expect(result.FOO[0]).toEqual({
+      dependency: "FOO",
+      placeholder: "${FOO}",
+      defaultValue: "bar",
+    });
+    expect(env.get("FOO")).toBe("${FOO}");
+  });
+
 });

@@ -73,4 +73,25 @@ describe("getVariableDependencies", () => {
     const result = getVariableDependencies("A", "hello world! @#$%");
     expect(result).toEqual({ A: [] });
   });
+
+  it("should ignore escaped placeholders", () => {
+    const result = getVariableDependencies("A", "\\${B} and \\$C");
+    expect(result).toEqual({ A: [] });
+  });
+
+  it("should detect $VAR style placeholders", () => {
+    const result = getVariableDependencies("A", "$B $C");
+    expect(result).toEqual({
+      A: [
+        { dependency: "B", placeholder: "$B" },
+        { dependency: "C", placeholder: "$C" },
+      ],
+    });
+  });
+
+  it("should ignore incomplete placeholders", () => {
+    const result = getVariableDependencies("A", "${} $");
+    expect(result).toEqual({ A: [] });
+  });
+
 });
