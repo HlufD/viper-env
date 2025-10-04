@@ -56,7 +56,7 @@
 
     ## 🔒 Validation & Sanitization
 
-        Required variable validation
+        Required variable validation -> this is done 
 
         Type validation (string, number, boolean, email, URL)
 
