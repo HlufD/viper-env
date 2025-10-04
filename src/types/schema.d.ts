@@ -5,8 +5,10 @@ type EnvVariableSchema = {
     type: EnvType;
     allowedValues?: any[];
     regex?: RegExp;
-    default?: any;
     custom?: (value: any) => true | string;
 };
 
 type EnvSchema = Record<string, EnvVariableSchema>;
+
+type ValidationMode = "throw" | "warn";
+
