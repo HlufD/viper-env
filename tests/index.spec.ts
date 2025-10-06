@@ -57,7 +57,7 @@ describe("config function comprehensive tests", () => {
 
     it("calls validateSchema if schema is provided", async () => {
         const schema = { TEST_VAR: { type: "number", required: true } };
-        await config(null, schema);
+        await config({ schema });
         expect(validateSpy).toHaveBeenCalledWith(schema, expect.any(Map));
     });
 
