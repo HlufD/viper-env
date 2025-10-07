@@ -18,7 +18,7 @@ async function config(options?: EnvConfigOptions) {
   resolveDependencies(environment, dependencyGraph, topologicalOrder);
 
   if (options?.schema) {
-    validateSchema(options.schema, environment)
+    validateSchema(environment, options)
   }
 
   return environment;

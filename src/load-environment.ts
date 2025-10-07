@@ -9,17 +9,11 @@ const defaultEnvFiles = [
   `.env.${process.env.NODE_ENV || "development"}.local`,
 ];
 
-interface EnvLoadOptions {
-  customFilePath?: string | null;
-  loadAllDefaults?: boolean;
-  debug?: boolean;
-}
-
 async function loadEnvironment(
   environment: Map<string, string>,
-  options: EnvLoadOptions = {}
+  options: EnvConfigOptions = {}
 ) {
-  const { customFilePath = null, loadAllDefaults = false, debug = false } = options;
+  const { path: customFilePath = null, loadAllDefaults = false, debug = false, override = true } = options;
   const cwd = process.cwd();
   let allFiles: string[] = [];
 
@@ -63,6 +57,7 @@ async function loadEnvironment(
       try {
         const file = await readEnvFile(filePath);
         for (const [key, value] of Object.entries(file)) {
+          if (environment.get(key) && !override) continue
           environment.set(key, value);
         }
       } catch (err) {

@@ -64,7 +64,7 @@ describe("loadEnvironment", () => {
   it("should warn and return the same Map if custom path is outside cwd", async () => {
     const outsidePath = "/tmp/.env";
     const result = await loadEnvironment(envMap, {
-      customFilePath: outsidePath,
+      path: outsidePath,
       debug: true
     });
 
@@ -77,7 +77,7 @@ describe("loadEnvironment", () => {
   it("should warn if custom file does not start with .env", async () => {
     const invalidFile = "config.txt";
     const result = await loadEnvironment(envMap, {
-      customFilePath: invalidFile,
+      path: invalidFile,
       debug: true
     });
 
@@ -92,7 +92,7 @@ describe("loadEnvironment", () => {
 
     const fakeFile = ".env.fake";
     const result = await loadEnvironment(envMap, {
-      customFilePath: fakeFile,
+      path: fakeFile,
       debug: true
     });
 
@@ -170,7 +170,7 @@ describe("loadEnvironment", () => {
     existsSyncSpy.mockReturnValue(false);
 
     await loadEnvironment(envMap, {
-      customFilePath: ".env.nonexistent",
+      path: ".env.nonexistent",
       debug: true
     });
 
@@ -229,7 +229,7 @@ describe("loadEnvironment", () => {
 
     console.log('Calling loadEnvironment...');
     const result = await loadEnvironment(envMap, {
-      customFilePath: ".env.custom",
+      path: ".env.custom",
       loadAllDefaults: true
     });
 
@@ -275,7 +275,7 @@ describe("loadEnvironment", () => {
     // Test path outside cwd
     const outsidePath = "../outside/.env";
     const result = await loadEnvironment(envMap, {
-      customFilePath: outsidePath,
+      path: outsidePath,
       debug: true
     });
 
@@ -288,7 +288,7 @@ describe("loadEnvironment", () => {
   it("should handle files with correct .env prefix but outside cwd", async () => {
     const outsideEnv = "/tmp/.env.config";
     const result = await loadEnvironment(envMap, {
-      customFilePath: outsideEnv,
+      path: outsideEnv,
       debug: true
     });
 
@@ -317,4 +317,80 @@ describe("loadEnvironment", () => {
 
     expect(result.get("TEST")).toBe("value");
   });
+
+
+  it("should override existing values by default (override: true)", async () => {
+    envMap.set("EXISTING", "old-value");
+    (readEnvFile as any).mockResolvedValue({ EXISTING: "new-value" });
+
+    const result = await loadEnvironment(envMap, { customFilePath: ".env" });
+
+    expect(result.get("EXISTING")).toBe("new-value");
+  });
+
+  it("should not override existing values when override is false", async () => {
+    envMap.set("EXISTING", "old-value");
+    (readEnvFile as any).mockResolvedValue({ EXISTING: "new-value" });
+
+    const result = await loadEnvironment(envMap, {
+      customFilePath: ".env",
+      override: false
+    });
+
+    expect(result.get("EXISTING")).toBe("old-value");
+  });
+
+  it("should still add new variables when override is false", async () => {
+    envMap.set("EXISTING", "old-value");
+    (readEnvFile as any).mockResolvedValue({
+      EXISTING: "new-value",
+      NEW: "added"
+    });
+
+    const result = await loadEnvironment(envMap, {
+      customFilePath: ".env",
+      override: false
+    });
+
+    expect(result.get("EXISTING")).toBe("old-value");
+    expect(result.get("NEW")).toBe("added");
+  });
+
+  it("should work with loadAllDefaults and override false", async () => {
+    envMap.set("COMMON", "initial-value");
+    (readEnvFile as any)
+      .mockResolvedValueOnce({ COMMON: "from-env" })
+      .mockResolvedValueOnce({ COMMON: "from-local" });
+
+    const result = await loadEnvironment(envMap, {
+      loadAllDefaults: true,
+      override: false
+    });
+
+    expect(result.get("COMMON")).toBe("initial-value");
+  });
+
+  it("should handle multiple files with override false", async () => {
+    envMap.set("PRESERVED", "original");
+    (readEnvFile as any)
+      .mockResolvedValueOnce({ PRESERVED: "try1" })
+      .mockResolvedValueOnce({ PRESERVED: "try2" });
+
+    const result = await loadEnvironment(envMap, {
+      loadAllDefaults: true,
+      override: false
+    });
+
+    expect(result.get("PRESERVED")).toBe("original");
+  });
+
+  it("should handle undefined override option as true (default)", async () => {
+    envMap.set("TEST", "original");
+    (readEnvFile as any).mockResolvedValue({ TEST: "new-value" });
+
+    const result = await loadEnvironment(envMap, { customFilePath: ".env" });
+
+    expect(result.get("TEST")).toBe("new-value");
+  });
+
 });
