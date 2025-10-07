@@ -8,7 +8,7 @@ import { validateSchema } from "./utils/validate-schema.js";
 
 async function config(options?: EnvConfigOptions) {
   const environment = new Map<string, string>();
-  await loadEnvironment(options?.path || null, environment);
+  await loadEnvironment(environment, options);
   applyEscapeSequences(environment);
 
   const dependencyGraph = buildEnvironmentDependencyGraph(environment);
