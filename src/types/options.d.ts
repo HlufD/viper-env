@@ -1,7 +1,8 @@
 interface EnvConfigOptions {
     path?: string = null;
     encoding?: BufferEncoding;
-    debug?: boolean;
+    debug?: boolean
+    loadAllDefaults?: boolean;
     override?: boolean;
     expand?: boolean;
     multiline?: boolean;
