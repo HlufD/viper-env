@@ -10,46 +10,66 @@ const defaultEnvFiles = [
 ];
 
 async function loadEnvironment(
-  customFilePath: string | null,
-  environment: Map<string, string>
+  environment: Map<string, string>,
+  options: EnvConfigOptions = {}
 ) {
+  const { path: customFilePath = null, loadAllDefaults = false, debug = false, override = true } = options;
   const cwd = process.cwd();
   let allFiles: string[] = [];
 
-  if (customFilePath) {
-    const resolved = path.resolve(cwd, customFilePath);
+  try {
+    if (customFilePath) {
+      const resolved = path.resolve(cwd, customFilePath);
 
-    if (!resolved.startsWith(cwd)) {
-      console.warn(`[ENV WARN] Custom env file "${customFilePath}" is outside project directory.`);
+      if (!resolved.startsWith(cwd)) {
+        debug && console.warn(`[ENV WARN] Custom env file "${customFilePath}" is outside the project directory.`);
+        return environment;
+      }
+
+      if (!path.basename(resolved).startsWith(".env")) {
+        debug && console.warn(`[ENV WARN] Custom env file "${customFilePath}" does not start with ".env".`);
+        return environment;
+      }
+
+      if (!fs.existsSync(resolved)) {
+        debug && console.warn(`[ENV WARN] Custom env file "${customFilePath}" does not exist.`);
+        return environment;
+      }
+
+      allFiles = [resolved];
+    }
+
+    else if (loadAllDefaults) {
+      allFiles = defaultEnvFiles.map((f) => path.resolve(cwd, f));
+    } else {
+      const defaultPath = path.resolve(cwd, ".env");
+      allFiles = [defaultPath];
+    }
+
+    const existingEnvPaths = allFiles.filter(fs.existsSync);
+
+    if (existingEnvPaths.length === 0) {
+      debug && console.warn(`[ENV WARN] No environment files found to load.`);
       return environment;
     }
 
-    if (!path.basename(resolved).startsWith(".env")) {
-      console.warn(`[ENV WARN] Custom env file "${customFilePath}" does not start with ".env".`);
-      return environment;
+    for (const filePath of existingEnvPaths) {
+      try {
+        const file = await readEnvFile(filePath);
+        for (const [key, value] of Object.entries(file)) {
+          if (environment.get(key) && !override) continue
+          environment.set(key, value);
+        }
+      } catch (err) {
+        debug && console.warn(`[ENV WARN] Failed to read "${filePath}": ${(err as Error).message}`);
+      }
     }
-
-    if (!fs.existsSync(resolved)) {
-      console.warn(`[ENV WARN] Custom env file "${customFilePath}" does not exist.`);
-      return environment;
-    }
-
-    allFiles = [resolved];
-  } else {
-    allFiles = defaultEnvFiles.map((f) => path.resolve(cwd, f));
-  }
-
-  const existingEnvPaths = allFiles.filter(fs.existsSync);
-
-  for (const filePath of existingEnvPaths) {
-    const file = await readEnvFile(filePath);
-
-    for (const [key, value] of Object.entries(file)) {
-      environment.set(key, value);
-    }
+  } catch (err) {
+    debug && console.error(`[ENV ERROR] Unexpected error loading environment: ${(err as Error).message}`);
   }
 
   return environment;
 }
 
 export { loadEnvironment };
+

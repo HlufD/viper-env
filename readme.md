@@ -39,7 +39,7 @@
 
 # 📁 File Management
 
-    ## 🔍 File Discovery
+    ## 🔍 File Discovery -> done
        - .env - Primary file
        - .env.local - Local overrides (ignored in git)
        - .env.{NODE_ENV} - Environment-specific (.env.production, .env.development)
@@ -50,21 +50,17 @@
        - Environment-specific files override general files
        - Local files override shared files
        - Configurable precedence rules
-       - Merge strategies (override, combine, smart)
+       - Merge strategies (override, combine, smart) -(except this)
 
 # 🛡️ Security Features
 
-    ## 🔒 Validation & Sanitization
+    ## 🔒 Validation & Sanitization -> done
 
-        Required variable validation -> this is done 
-
-        Type validation (string, number, boolean, email, URL)
-
-        Regex pattern validation
-
-        Custom validator functions
-
-        Schema-based validation
+        - Required variable validation
+        - Type validation (string, number, boolean, email, URL)
+        - Regex pattern validation
+        - Custom validator functions
+        - Schema-based validation
 
     ## 🚫 Security Protection
 
@@ -92,16 +88,12 @@
 
     # 🎛️ Type Conversion
 
-        Automatic type detection
-
-        true/false → Boolean
-
-        123 → Number
-
-        null/undefined → null/undefined
-
+       - Automatic type detection
+       - true/false → Boolean
+       - 123 → Number
+       - null/undefined → null/undefined (not sure)
+       
         JSON parsing ({"key": "value"} → Object)
-
         Array parsing (item1,item2,item3 → Array)
 
     # ⚙️ Transformation
@@ -134,7 +126,7 @@
     processEnv: process.env,        // Target environment object
     expand: true,                   // Enable variable expansion
     multiline: true,                // Enable multi-line values
-    validation: {                   // Validation rules
+    schema: {                   // Validation rules
         required: ['DATABASE_URL'],
         schema: {
         PORT: { type: 'number', min: 1, max: 65535 }

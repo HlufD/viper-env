@@ -6,9 +6,9 @@ import { applyEscapeSequences } from "./apply-escape-sequences.js";
 import { resolveDependencies } from "./resolve-dependencies.js";
 import { validateSchema } from "./utils/validate-schema.js";
 
-async function config(path: string | null = null, schema?: EnvSchema) {
+async function config(options?: EnvConfigOptions) {
   const environment = new Map<string, string>();
-  await loadEnvironment(path, environment);
+  await loadEnvironment(environment, options);
   applyEscapeSequences(environment);
 
   const dependencyGraph = buildEnvironmentDependencyGraph(environment);
@@ -17,11 +17,12 @@ async function config(path: string | null = null, schema?: EnvSchema) {
   const topologicalOrder = topologicalSort(dependencyGraph);
   resolveDependencies(environment, dependencyGraph, topologicalOrder);
 
-  if (schema) {
-    validateSchema(schema, environment)
+  if (options?.schema) {
+    validateSchema(environment, options)
   }
 
   return environment;
 }
 
 export { config };
+

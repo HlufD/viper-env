@@ -1,19 +1,19 @@
 function validateSchema(
-    schema: EnvSchema,
     environment: Map<string, string | number | boolean>,
-    mode: ValidationMode = "warn"
+    options: EnvConfigOptions
 ) {
+    const { validationMode: mode = "warn", schema, debug = false } = options
     const errors: string[] = [];
 
     const handleValidation = (message: string) => {
         if (mode === "throw") {
             errors.push(message);
         } else {
-            console.warn(message);
+            debug && console.warn(message);
         }
     };
 
-    for (const [key, rule] of Object.entries(schema)) {
+    for (const [key, rule] of Object.entries(schema!)) {
         const currValue = environment.get(key);
 
         if ((currValue === undefined || currValue === "") && rule.required) {
