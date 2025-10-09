@@ -6,7 +6,7 @@ import { removeComment } from "./remove-comment.js";
 import { containsComment } from "./contains-comment.js";
 import { isMultiLine } from "./is-multi-line.js";
 
-async function readEnvFile(path: string) {
+async function readEnvFile(path: string, multiline?: boolean) {
   const readSteam = fs.createReadStream(path, { encoding: "utf-8" });
 
   const rl = readline.createInterface({
@@ -27,7 +27,7 @@ async function readEnvFile(path: string) {
     if (isCommentLine(trimmedLine) || !trimmedLine) continue;
 
     //  continuation of a multiline value
-    if (!isKeyValueLine(trimmedLine) && isMultiLineStatus) {
+    if (!isKeyValueLine(trimmedLine) && isMultiLineStatus && multiline) {
       if (containsComment(trimmedLine)) {
         trimmedLine = removeComment(trimmedLine);
       }
