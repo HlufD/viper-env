@@ -116,7 +116,7 @@
 
         Fallback strategies
 
-# 🎛️ Configuration Options
+# 🎛️ Configuration Options -> done
 
     ```{
     path: '.env',                   // File path or array of paths
@@ -143,7 +143,7 @@
 
     Caching parsed results for faster reloads
 
-# 🖥️ Cross-platform Compatibility
+# 🖥️ Cross-platform Compatibility -> done
 
     Handle CRLF (\r\n) vs LF (\n) line endings
 
@@ -162,6 +162,8 @@
     envtool encrypt (secure variables)
 
     envtool decrypt (restore variables)
+
+
 
 # 🚀 Implementation Phases
 

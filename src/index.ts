@@ -15,14 +15,14 @@ async function config(options?: EnvConfigOptions) {
   extractDefaultValuesFromDependencies(dependencyGraph, environment);
 
   const topologicalOrder = topologicalSort(dependencyGraph);
-  resolveDependencies(environment, dependencyGraph, topologicalOrder);
+  if (options?.expand)
+    resolveDependencies(environment, dependencyGraph, topologicalOrder);
 
   if (options?.schema) {
-    validateSchema(environment, options)
+    validateSchema(environment, options);
   }
 
   return environment;
 }
 
 export { config };
-
