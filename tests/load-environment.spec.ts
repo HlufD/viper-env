@@ -20,8 +20,8 @@ describe("loadEnvironment", () => {
     vi.clearAllMocks();
 
     // Mock console methods
-    consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => { });
-    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => { });
+    consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     // Default mock for existsSync
     existsSyncSpy = vi.spyOn(fs, "existsSync").mockReturnValue(true);
@@ -46,7 +46,9 @@ describe("loadEnvironment", () => {
   it("should read a custom env file and populate the Map", async () => {
     (readEnvFile as any).mockResolvedValue({ PORT: "3000", HOST: "localhost" });
 
-    const result = await loadEnvironment(envMap, { customFilePath: ".env.custom" });
+    const result = await loadEnvironment(envMap, {
+      customFilePath: ".env.custom",
+    });
 
     expect(result).toBeInstanceOf(Map);
     expect(result.get("PORT")).toBe("3000");
@@ -65,7 +67,7 @@ describe("loadEnvironment", () => {
     const outsidePath = "/tmp/.env";
     const result = await loadEnvironment(envMap, {
       path: outsidePath,
-      debug: true
+      debug: true,
     });
 
     expect(result).toBe(envMap);
@@ -78,7 +80,7 @@ describe("loadEnvironment", () => {
     const invalidFile = "config.txt";
     const result = await loadEnvironment(envMap, {
       path: invalidFile,
-      debug: true
+      debug: true,
     });
 
     expect(result).toBe(envMap);
@@ -93,7 +95,7 @@ describe("loadEnvironment", () => {
     const fakeFile = ".env.fake";
     const result = await loadEnvironment(envMap, {
       path: fakeFile,
-      debug: true
+      debug: true,
     });
 
     expect(result).toBe(envMap);
@@ -140,8 +142,11 @@ describe("loadEnvironment", () => {
 
     expect(result.size).toBe(1);
     expect(readEnvFile).toHaveBeenCalledTimes(1);
-    expect(readEnvFile).toHaveBeenCalledWith(path.resolve(process.cwd(), ".env"));
-  })
+    expect(readEnvFile).toHaveBeenCalledWith(
+      path.resolve(process.cwd(), ".env"),
+      expect.any(Boolean)
+    );
+  });
 
   it("should merge multiple env files, last value wins for duplicate keys", async () => {
     (readEnvFile as any)
@@ -171,7 +176,7 @@ describe("loadEnvironment", () => {
 
     await loadEnvironment(envMap, {
       path: ".env.nonexistent",
-      debug: true
+      debug: true,
     });
 
     expect(console.warn).toHaveBeenCalledWith(
@@ -184,12 +189,12 @@ describe("loadEnvironment", () => {
 
     const result = await loadEnvironment(envMap, {
       customFilePath: ".env",
-      debug: true
+      debug: true,
     });
 
     expect(result).toBe(envMap);
     expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('Failed to read')
+      expect.stringContaining("Failed to read")
     );
   });
 
@@ -220,17 +225,17 @@ describe("loadEnvironment", () => {
   it("should prioritize customFilePath over loadAllDefaults when both are provided", async () => {
     existsSyncSpy.mockImplementation((filePath: any) => {
       const pathStr = filePath.toString();
-      console.log('existsSync called with:', pathStr);
+      console.log("existsSync called with:", pathStr);
       return pathStr.endsWith(".env.custom");
     });
 
     const mockedReadEnvFile = vi.mocked(readEnvFile);
     mockedReadEnvFile.mockResolvedValue({ CUSTOM: "value" });
 
-    console.log('Calling loadEnvironment...');
+    console.log("Calling loadEnvironment...");
     const result = await loadEnvironment(envMap, {
       path: ".env.custom",
-      loadAllDefaults: true
+      loadAllDefaults: true,
     });
 
     expect(result.get("CUSTOM")).toBe("value");
@@ -276,7 +281,7 @@ describe("loadEnvironment", () => {
     const outsidePath = "../outside/.env";
     const result = await loadEnvironment(envMap, {
       path: outsidePath,
-      debug: true
+      debug: true,
     });
 
     expect(result).toBe(envMap);
@@ -289,7 +294,7 @@ describe("loadEnvironment", () => {
     const outsideEnv = "/tmp/.env.config";
     const result = await loadEnvironment(envMap, {
       path: outsideEnv,
-      debug: true
+      debug: true,
     });
 
     expect(result).toBe(envMap);
@@ -303,7 +308,7 @@ describe("loadEnvironment", () => {
 
     const result = await loadEnvironment(envMap, {
       customFilePath: ".env.nonexistent",
-      debug: false
+      debug: false,
     });
 
     expect(result).toBe(envMap);
@@ -313,11 +318,12 @@ describe("loadEnvironment", () => {
   it("should handle custom file path that resolves to current directory", async () => {
     (readEnvFile as any).mockResolvedValue({ TEST: "value" });
 
-    const result = await loadEnvironment(envMap, { customFilePath: ".env.test" });
+    const result = await loadEnvironment(envMap, {
+      customFilePath: ".env.test",
+    });
 
     expect(result.get("TEST")).toBe("value");
   });
-
 
   it("should override existing values by default (override: true)", async () => {
     envMap.set("EXISTING", "old-value");
@@ -334,7 +340,7 @@ describe("loadEnvironment", () => {
 
     const result = await loadEnvironment(envMap, {
       customFilePath: ".env",
-      override: false
+      override: false,
     });
 
     expect(result.get("EXISTING")).toBe("old-value");
@@ -344,12 +350,12 @@ describe("loadEnvironment", () => {
     envMap.set("EXISTING", "old-value");
     (readEnvFile as any).mockResolvedValue({
       EXISTING: "new-value",
-      NEW: "added"
+      NEW: "added",
     });
 
     const result = await loadEnvironment(envMap, {
       customFilePath: ".env",
-      override: false
+      override: false,
     });
 
     expect(result.get("EXISTING")).toBe("old-value");
@@ -364,7 +370,7 @@ describe("loadEnvironment", () => {
 
     const result = await loadEnvironment(envMap, {
       loadAllDefaults: true,
-      override: false
+      override: false,
     });
 
     expect(result.get("COMMON")).toBe("initial-value");
@@ -378,7 +384,7 @@ describe("loadEnvironment", () => {
 
     const result = await loadEnvironment(envMap, {
       loadAllDefaults: true,
-      override: false
+      override: false,
     });
 
     expect(result.get("PRESERVED")).toBe("original");
@@ -392,5 +398,4 @@ describe("loadEnvironment", () => {
 
     expect(result.get("TEST")).toBe("new-value");
   });
-
 });

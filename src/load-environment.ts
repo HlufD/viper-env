@@ -13,7 +13,13 @@ async function loadEnvironment(
   environment: Map<string, string>,
   options: EnvConfigOptions = {}
 ) {
-  const { path: customFilePath = null, loadAllDefaults = false, debug = false, override = true } = options;
+  const {
+    path: customFilePath = null,
+    loadAllDefaults = false,
+    debug = false,
+    override = true,
+    multiline = false,
+  } = options;
   const cwd = process.cwd();
   let allFiles: string[] = [];
 
@@ -22,24 +28,31 @@ async function loadEnvironment(
       const resolved = path.resolve(cwd, customFilePath);
 
       if (!resolved.startsWith(cwd)) {
-        debug && console.warn(`[ENV WARN] Custom env file "${customFilePath}" is outside the project directory.`);
+        debug &&
+          console.warn(
+            `[ENV WARN] Custom env file "${customFilePath}" is outside the project directory.`
+          );
         return environment;
       }
 
       if (!path.basename(resolved).startsWith(".env")) {
-        debug && console.warn(`[ENV WARN] Custom env file "${customFilePath}" does not start with ".env".`);
+        debug &&
+          console.warn(
+            `[ENV WARN] Custom env file "${customFilePath}" does not start with ".env".`
+          );
         return environment;
       }
 
       if (!fs.existsSync(resolved)) {
-        debug && console.warn(`[ENV WARN] Custom env file "${customFilePath}" does not exist.`);
+        debug &&
+          console.warn(
+            `[ENV WARN] Custom env file "${customFilePath}" does not exist.`
+          );
         return environment;
       }
 
       allFiles = [resolved];
-    }
-
-    else if (loadAllDefaults) {
+    } else if (loadAllDefaults) {
       allFiles = defaultEnvFiles.map((f) => path.resolve(cwd, f));
     } else {
       const defaultPath = path.resolve(cwd, ".env");
@@ -55,21 +68,26 @@ async function loadEnvironment(
 
     for (const filePath of existingEnvPaths) {
       try {
-        const file = await readEnvFile(filePath);
+        const file = await readEnvFile(filePath, multiline);
         for (const [key, value] of Object.entries(file)) {
-          if (environment.get(key) && !override) continue
+          if (environment.get(key) && !override) continue;
           environment.set(key, value);
         }
       } catch (err) {
-        debug && console.warn(`[ENV WARN] Failed to read "${filePath}": ${(err as Error).message}`);
+        debug &&
+          console.warn(
+            `[ENV WARN] Failed to read "${filePath}": ${(err as Error).message}`
+          );
       }
     }
   } catch (err) {
-    debug && console.error(`[ENV ERROR] Unexpected error loading environment: ${(err as Error).message}`);
+    debug &&
+      console.error(
+        `[ENV ERROR] Unexpected error loading environment: ${(err as Error).message}`
+      );
   }
 
   return environment;
 }
 
 export { loadEnvironment };
-
