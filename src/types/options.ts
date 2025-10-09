@@ -1,3 +1,5 @@
+import type { EnvSchema, ValidationMode } from "./schema.js";
+
 interface EnvConfigOptions {
   path?: string;
   debug?: boolean;
@@ -8,3 +10,5 @@ interface EnvConfigOptions {
   validationMode?: ValidationMode;
   schema?: EnvSchema;
 }
+
+export type { EnvConfigOptions };

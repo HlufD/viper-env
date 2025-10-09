@@ -1,3 +1,5 @@
+import type { EnvConfigOptions } from "../types/options.js";
+
 function validateSchema(
   environment: Map<string, string | number | boolean>,
   options: EnvConfigOptions

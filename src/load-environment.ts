@@ -1,6 +1,7 @@
 import path from "node:path";
 import { readEnvFile } from "./utils/read-env-file.js";
 import fs from "node:fs";
+import type { EnvConfigOptions } from "./types/options.js";
 
 const defaultEnvFiles = [
   `.env`,
