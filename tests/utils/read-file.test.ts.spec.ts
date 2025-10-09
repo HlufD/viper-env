@@ -86,12 +86,12 @@ BROKEN_MULTI="This never ends
   });
 
   it("should handle multi-line values (double quotes)", async () => {
-    const result = await readEnvFile(tempEnvPath);
+    const result = await readEnvFile(tempEnvPath, true);
     expect(result.MULTI_VAR).toBe("This isa multi-linevalue");
   });
 
   it("should handle multi-line values (single quotes)", async () => {
-    const result = await readEnvFile(tempEnvPath);
+    const result = await readEnvFile(tempEnvPath, true);
     expect(result.SINGLE_MULTI).toBe("This isalso multi-linevalue");
   });
 
@@ -127,13 +127,13 @@ BROKEN_MULTI="This never ends
   });
 
   it("should handle certificate-like multi-line values", async () => {
-    const result = await readEnvFile(tempEnvPath);
+    const result = await readEnvFile(tempEnvPath, true);
     expect(result.CERT).toContain("-----BEGIN CERT-----");
     expect(result.CERT).toContain("-----END CERT-----");
   });
 
   it("should ignore comments after closing quotes in multi-line", async () => {
-    const result = await readEnvFile(tempEnvPath);
+    const result = await readEnvFile(tempEnvPath, true);
     expect(result.CERT2).toContain("-----BEGIN CERT-----");
     expect(result.CERT2).not.toContain("#this is private key comment");
   });
