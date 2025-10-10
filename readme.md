@@ -64,7 +64,7 @@
 
     ## 🚫 Security Protection -(not yet)
 
-        Path traversal prevention
+        Path traversal prevention -> done
 
 # 🔧 Value Processing
 
