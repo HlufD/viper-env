@@ -5,6 +5,8 @@ import { loadEnvironment } from "./load-environment.js";
 import { applyEscapeSequences } from "./apply-escape-sequences.js";
 import { resolveDependencies } from "./resolve-dependencies.js";
 import { validateSchema } from "./utils/validate-schema.js";
+import { setProcessEnv } from "./utils/set-process-env.js";
+import type { EnvConfigOptions } from "./types/options.js";
 
 async function config(options?: EnvConfigOptions) {
   const environment = new Map<string, string>();
@@ -21,6 +23,8 @@ async function config(options?: EnvConfigOptions) {
   if (options?.schema) {
     validateSchema(environment, options);
   }
+
+  setProcessEnv(environment);
 
   return environment;
 }

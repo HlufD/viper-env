@@ -13,9 +13,9 @@
 - Preserving `#` inside quoted values
 - Allowing `#` as a value
 
-# 🎯 Advanced Syntax Features
+# 🎯 Advanced Syntax Features -> done
 
-    - export KEY=value (optional export prefix)
+    - export KEY=value (optional export prefix) -> (not yet)
 
     ## 🔄 Variable Expansion -> done
        - PATH=${HOME}/bin (brace expansion)
@@ -37,7 +37,7 @@
        - \uXXXX - Unicode characters
        - \$ - Dollar sign (prevent expansion)
 
-# 📁 File Management
+# 📁 File Management -> done
 
     ## 🔍 File Discovery -> done
        - .env - Primary file
@@ -46,11 +46,11 @@
        - .env.{NODE_ENV}.local - Environment-specific local overrides
        - Custom file path support
 
-    ## 📊 Loading Precedence
+    ## 📊 Loading Precedence - done
        - Environment-specific files override general files
        - Local files override shared files
        - Configurable precedence rules
-       - Merge strategies (override, combine, smart) -(except this)
+       - Merge strategies (override, combine, smart) -(not yet only override is done )
 
 # 🛡️ Security Features
 
@@ -62,43 +62,25 @@
         - Custom validator functions
         - Schema-based validation
 
-    ## 🚫 Security Protection
+    ## 🚫 Security Protection -(not yet)
 
-        Path traversal prevention
-
-        File permission checks
-
-        Injection attack prevention
-
-        Sensitive data masking in logs
-
-        Safe default permissions
-
-    ## 🔐 Advanced Security
-
-        Optional encryption support
-
-        Secure environment variable storage
-
-        Audit logging
-
-        Compliance features (GDPR, HIPAA)
+        Path traversal prevention -> done
 
 # 🔧 Value Processing
 
-    # 🎛️ Type Conversion
+    # 🎛️ Type Conversion -> (done)
 
        - Automatic type detection
        - true/false → Boolean
        - 123 → Number
        - null/undefined → null/undefined (not sure)
-       
-        JSON parsing ({"key": "value"} → Object)
-        Array parsing (item1,item2,item3 → Array)
+    
+        JSON parsing ({"key": "value"} → Object) ->(not yet)
+        Array parsing (item1,item2,item3 → Array)->(not yet)
 
     # ⚙️ Transformation
 
-        Default values for missing variables
+        Default values for missing variables -> done
 
         Value transformation functions
 
@@ -106,21 +88,18 @@
 
         Custom value processors
 
-    # 🔍 Variable Resolution
+    # 🔍 Variable Resolution 
 
-        System environment variable integration
+        System environment variable integration (not yet)
 
-        Process environment variable access
+        Process environment variable access -> done
 
-        Configurable resolution order
-
-        Fallback strategies
+        Configurable resolution order -> done
 
 # 🎛️ Configuration Options -> done
 
     ```{
-    path: '.env',                   // File path or array of paths
-    encoding: 'utf8',               // File encoding
+    path: '.env',                   // File path or array of paths         
     debug: false,                   // Debug mode
     override: false,                // Override existing variables
     processEnv: process.env,        // Target environment object
@@ -137,9 +116,9 @@
 
 # ⚡ Production Niceties
 
-    Large .env files with 1000+ lines (enterprise-scale support)
+    Large .env files with 1000+ lines (enterprise-scale support) -> done
 
-    Streaming / line-by-line parsing (avoid full file in memory)
+    Streaming / line-by-line parsing (avoid full file in memory) -> done
 
     Caching parsed results for faster reloads
 
